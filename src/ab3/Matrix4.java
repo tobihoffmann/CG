@@ -22,13 +22,16 @@ public class Matrix4 {
 	}
 
 	// projection matrix
-	public Matrix4(float far, float near) {
+	public Matrix4(float near, float far, float fov) {
+		float scale = (float) (1f / Math.tan(Math.toRadians(fov / 2f)));
+
 		this.matrix = new float[][] {
-			{ 2, 0, 0, 0},
-			{ 0, 1, 0, 0},
-			{ 0, 0, ((far + near) / (near - far)),((2 * far * near) / (near - far)) },
+			{ scale, 0, 0, 0},
+			{ 0, scale, 0, 0},
+			{ 0, 0, ((-near + far) / (far - near)),((-2 * far * near) / (far - near)) },
 			{ 0, 0, -1, 0}
 		};
+
 
 	}
 
