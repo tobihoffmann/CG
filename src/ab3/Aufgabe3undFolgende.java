@@ -8,8 +8,8 @@ import lenz.opengl.ShaderProgram;
 public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
 	private ShaderProgram shaderProgram;
-	private Matrix4 transform = new Matrix4();
-	private Matrix4 project= new Matrix4(3f,1000f,40);
+	private Matrix4 transformationMatrix = new Matrix4();
+	private Matrix4 projectionMatrix = new Matrix4(.19f,1000f,70);
 
 	public static void main(String[] args) {
 		new Aufgabe3undFolgende().start("CG Aufgabe 3", 700, 700);
@@ -126,22 +126,24 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
 	@Override
 	public void update() {
-		transform.rotateY(1f).rotateZ(.25f).scale(1.001f);
+		transformationMatrix.rotateY(1f).hover(.1f);
+
 	}
 
 	@Override
 	protected void render() {
 		// VAOs zeichnen
+
 		glClearColor(1.f,0.89f,0.91f,1f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES,0,24);
 
 		// Matrix an Shader übertragen
-		int loc = glGetUniformLocation(shaderProgram.getId(), "transform");
-		glUniformMatrix4fv(loc,false, transform.getValuesAsArray());
+		int trans = glGetUniformLocation(shaderProgram.getId(), "transformationMatrix");
+		glUniformMatrix4fv(trans,false, transformationMatrix.getValuesAsArray());
 
-		int pro = glGetUniformLocation(shaderProgram.getId(), "project");
-		glUniformMatrix4fv(pro,false, project.getValuesAsArray());
+		int pro = glGetUniformLocation(shaderProgram.getId(), "projectionMatrix");
+		glUniformMatrix4fv(pro,false, projectionMatrix.getValuesAsArray());
 	}
 
 	@Override

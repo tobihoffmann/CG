@@ -1,21 +1,23 @@
 #version 330
 
+layout(location = 0) in vec3 colordata;
 layout(location = 1) in vec3 vertices;
 
-uniform mat4 transform;
-uniform mat4 project;
-layout(location = 0) in vec3 colordata;
+uniform mat4 transformationMatrix;
+uniform mat4 projectionMatrix;
 
 out vec3 color;
+out vec4 pixelPosition;
+
 
 
 void main() {
 
+
+
     color = colordata;
-    // hier kann Transformation erfolgen
-    gl_Position = transform * vec4(vertices,1.0);
+    pixelPosition = transformationMatrix * vec4(vertices,1.0);
+    gl_Position = pixelPosition;
 
 
-    // warum nicht als out wie im F.Shader?!}
-    // warum WAS nicht als out?
 }
