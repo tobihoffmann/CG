@@ -8,8 +8,10 @@ import lenz.opengl.ShaderProgram;
 public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
 	private ShaderProgram shaderProgram;
-	private Matrix4 transformationMatrix = new Matrix4();
-	private Matrix4 projectionMatrix = new Matrix4(.19f,1000f,70);
+	private Matrix4 positionMatrix = new Matrix4();
+	private Matrix4 projectionMatrix = new Matrix4(1f,1000f,70);
+	private float angle = 1;
+
 
 	public static void main(String[] args) {
 		new Aufgabe3undFolgende().start("CG Aufgabe 3", 700, 700);
@@ -122,12 +124,20 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
 		glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
 		//glEnable(GL_CULL_FACE); // backface culling aktivieren
+
+		positionMatrix.translate(0,0,-2);
+
 	}
 
 	@Override
 	public void update() {
-		transformationMatrix.rotateY(1f).hover(.1f);
-
+		positionMatrix.hover(.1f);
+		Matrix4 transformationMatrix = new Matrix4();
+		angle += 1;
+		transformationMatrix.rotateY(angle);
+		transformationMatrix.multiply(positionMatrix);
+		int trans = glGetUniformLocation(shaderProgram.getId(), "transformationMatrix");
+		glUniformMatrix4fv(trans,false, transformationMatrix.getValuesAsArray());
 	}
 
 	@Override
@@ -139,9 +149,6 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 		glDrawArrays(GL_TRIANGLES,0,24);
 
 		// Matrix an Shader übertragen
-		int trans = glGetUniformLocation(shaderProgram.getId(), "transformationMatrix");
-		glUniformMatrix4fv(trans,false, transformationMatrix.getValuesAsArray());
-
 		int pro = glGetUniformLocation(shaderProgram.getId(), "projectionMatrix");
 		glUniformMatrix4fv(pro,false, projectionMatrix.getValuesAsArray());
 	}
@@ -150,6 +157,30 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 	public void destroy() {
 	}
 }
+
+/** Licht
+*
+* 4 Vektoren für die Berechnung N,L,V,R
+ *
+ * N = Normale (Skalar von flächenaufspannenden Vetoren oder passende Einheitsvektoren wählen), kann mit Transformationsmatrix verwendet werden
+ * Bei nicht proportionaler Skalierung wird Normal Matrix benötigt: Normalmatrix = invertse, transponierte Modelmatrix
+ *
+ *
+ * L = normalize (Lichtpos - "meine Pos")
+ * R = Reflektiertes Licht (reflect(-L, N) oder reflect(N, -L))
+ * V = Camera normalize (0,0,0 - "meine Pos")
+ *
+ * Lichtpos = konstanter Vektor
+ * meine Pos = Lineare Interpolation der Vertices des Dreiecks
+ *
+*
+* N in Java eingeben > VBO > Vertexshader
+* NormalMatrix * Normal > FragmentShader
+*
+ * dot(v3,v3) = skalarprodukt
+ *
+ * max(0, dot(N,L)) + pow(dot(R,V),n)
+**/
 
 // Licht
 // meine pos = ModelMatrix * Eckkoordinate

@@ -8,16 +8,17 @@ uniform mat4 projectionMatrix;
 
 out vec3 color;
 out vec4 pixelPosition;
+out vec3 verticesFrag;
 
 
 
 void main() {
 
 
-
+    verticesFrag = vertices;
     color = colordata;
     pixelPosition = transformationMatrix * vec4(vertices,1.0);
-    gl_Position = pixelPosition;
+    gl_Position = projectionMatrix * pixelPosition;
 
 
 }

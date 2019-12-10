@@ -6,7 +6,7 @@ package ab3;
 
 public class Matrix4 {
 
-	private float[][] matrix;
+	public float[][] matrix;
 	private float hoverSpeed = 0.001f;
 
 	public Matrix4() {
@@ -18,24 +18,25 @@ public class Matrix4 {
 		};
 	}
 
-	private Matrix4(Matrix4 copy) {
-		for (int i = 0; i < 4; i++) this.matrix[i] = copy.matrix[i].clone();
+	public Matrix4(Matrix4 copy) {
+		this.matrix = java.util.Arrays.stream(copy.matrix).map(el -> el.clone()).toArray($ -> copy.matrix.clone());
 	}
+
 
 	// projection matrix
 	public Matrix4(float near, float far, float fov) {
 		float scale = (float) (1f / Math.tan(Math.toRadians(fov / 2f)));
 
 		this.matrix = new float[][] {
-			{ scale, 0, 0, 0},
-			{ 0, scale, 0, 0},
+			{ 1, 0, 0, 0},
+			{ 0, 1, 0, 0},
 			{ 0, 0, ((-far - near) / (far - near)), ((-2 * far * near) / (far - near)) },
 			{ 0, 0, -1, 0}
 		};
 
 	}
 	// multiplies the matrix by another given matrix
-	private Matrix4 multiply(Matrix4 other) {
+	public Matrix4 multiply(Matrix4 other) {
 		float[][] m = new float[4][4];
 		for(int row = 0; row < 4; row++) {
 			for (int col = 0; col < 4; col++) {
