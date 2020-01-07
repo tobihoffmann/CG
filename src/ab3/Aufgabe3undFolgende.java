@@ -67,6 +67,11 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
 		};
 
+		float[] normals = {
+
+
+		};
+
 		float[] color = {
 				0.8f,1.0f,0.94f,
 				0.8f,1.0f,0.94f,

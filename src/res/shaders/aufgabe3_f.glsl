@@ -25,5 +25,5 @@ float luminance = max(0, dot(normal,light)) + pow(dot(reflected, view),1);
 
 void main() {
 
-    pColor = luminance * color;
+    pColor = color;
 }
