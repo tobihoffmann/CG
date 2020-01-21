@@ -7,32 +7,63 @@ import lenz.opengl.ShaderProgram;
 
 public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 
-	private ShaderProgram shaderProgram;
-
-	private Matrix4 positionMatrix = new Matrix4();
+	private ShaderProgram gemShaders;
+	private ShaderProgram waterShaders;
+	private Matrix4 posMatrixGem;
+	private Matrix4 posMatrixWater;
 	private Matrix4 projectionMatrix;
-
-	private float angle = 1;
-
-	private Objects3d gem;
-
+	private Object3d gem;
+	private Object3d water;
+	private float angle;
 
 	public static void main(String[] args) { new Aufgabe3undFolgende().start("CG Aufgabe 3", 700, 700); }
 
 	@Override
 	protected void init() {
         gem = new Gem("marble_texture.png");
-        projectionMatrix = new Matrix4(1f,1000f,70);
+		water = new Gem("water_texture.png");
 
-        shaderProgram = new ShaderProgram("aufgabe3");
+		posMatrixGem = new Matrix4();
+		posMatrixWater = new Matrix4();
+
+		gemShaders = new ShaderProgram("phong");
+		waterShaders = new ShaderProgram("gouraud");
+
+		angle = 1;
+		projectionMatrix = new Matrix4(1f,1000f,70);
+
+        drawObject(gemShaders, gem, posMatrixGem,0, -2, 2);
+		drawObject(waterShaders, water, posMatrixWater,1, -3, 2);
+    }
+
+	@Override
+	public void update() {
+		animateObject(gemShaders, posMatrixGem);
+		animateObject(waterShaders, posMatrixWater);
+	}
+
+	@Override
+	protected void render() {
+		// VAOs zeichnen
+
+		glClearColor(1.0f,0.89f,0.91f,1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		renderObject(gemShaders, gem, 24);
+		renderObject(waterShaders, water, 24);
+	}
+
+	@Override
+	public void destroy() {
+	}
+
+	private void drawObject(ShaderProgram shaderProgram, Object3d object3d, Matrix4 positionMatrix, float xTranslation, float zTranslation, float scale) {
 		glUseProgram(shaderProgram.getId());
-
 		// Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
-        float[] vertices = gem.getVertices();
-		float[] normals = gem.getNormals();
-		float[] color = gem.getColors();
-		float[] uvCoords = gem.getUvCoords();
+		float[] vertices = object3d.getVertices();
+		float[] normals = object3d.getNormals();
+		float[] color = object3d.getColors();
+		float[] uvCoords = object3d.getUvCoords();
 
 		int vaoId = glGenVertexArrays();
 		glBindVertexArray(vaoId);
@@ -68,11 +99,16 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 		glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
 		//glEnable(GL_CULL_FACE); // backface culling aktivieren
 
-		positionMatrix.translate(0,0,-2).scale(2);
-    }
+		positionMatrix.translate(xTranslation,0, zTranslation).scale(scale);
 
-	@Override
-	public void update() {
+		// Matrix an Shader übertragen
+		int pro = glGetUniformLocation(shaderProgram.getId(), "projectionMatrix");
+		glUniformMatrix4fv(pro,false, projectionMatrix.getValuesAsArray());
+	}
+
+
+	private void animateObject(ShaderProgram shaderProgram, Matrix4 positionMatrix) {
+		glUseProgram(shaderProgram.getId());
 		positionMatrix.hover(.1f);
 		Matrix4 transformationMatrix = new Matrix4();
 		angle += 1;
@@ -82,23 +118,9 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 		glUniformMatrix4fv(trans,false, transformationMatrix.getValuesAsArray());
 	}
 
-	@Override
-	protected void render() {
-		// VAOs zeichnen
-
-		glClearColor(1.0f,0.89f,0.91f,1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDrawArrays(GL_TRIANGLES,0,24);
-
-		// Matrix an Shader übertragen
-		int pro = glGetUniformLocation(shaderProgram.getId(), "projectionMatrix");
-		glUniformMatrix4fv(pro,false, projectionMatrix.getValuesAsArray());
-
-		glBindTexture(GL_TEXTURE_2D, gem.getTexture().getId());
-
-	}
-
-	@Override
-	public void destroy() {
+	private void renderObject(ShaderProgram shaderProgram, Object3d object3d, int faces) {
+			glUseProgram(shaderProgram.getId());
+			glBindTexture(GL_TEXTURE_2D, object3d.getTexture().getId());
+			glDrawArrays(GL_TRIANGLES,0, faces);
 	}
 }

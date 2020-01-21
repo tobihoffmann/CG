@@ -1,6 +1,6 @@
 package ab3;
 
-public class Gem extends Objects3d {
+public class Gem extends Object3d {
 
     public Gem(String texture) {
         this.vertices = drawVertices();

@@ -2,7 +2,7 @@ package ab3;
 
 import lenz.opengl.Texture;
 
-public class Objects3d {
+public class Object3d {
 
     public float[] vertices;
     public float[] normals;
@@ -10,7 +10,7 @@ public class Objects3d {
     public float[] uvCoords;
     public Texture texture;
 
-    public Objects3d() {
+    public Object3d() {
     }
 
     public float[] getVertices() {

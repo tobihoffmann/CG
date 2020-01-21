@@ -25,5 +25,4 @@ void main() {
 
     mat3 normalMatrix = inverse(transpose(mat3(transformationMatrix)));
     normalsFrag = normalize(normalMatrix * normals);
-
 }
