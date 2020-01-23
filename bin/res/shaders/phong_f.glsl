@@ -7,19 +7,32 @@ in vec2 uvCoords;
 
 out vec3 pColor;
 
-// Phong
-float intensity = 1.5f;
-vec3 lightsource = vec3(-10.0f, 6.0f, 40.0f);
-vec3 light = normalize(lightsource - pixelPosition.xyz); // L
-vec3 reflected = reflect(-light, normalsFrag); // R
-vec3 view = normalize(-pixelPosition.xyz); // V
+float intensity;
+vec3 lightsource;
 
-float luminance = intensity * (max(0, dot(normalsFrag,light)) + pow(dot(reflected, view),1));
+vec3 light;
+vec3 reflected;
+vec3 view;
+
+float luminance;
+vec3 lightColor;
 
 uniform sampler2D smplr;
-vec3 textureColor = vec3(texture(smplr, uvCoords));
+vec3 textureColor;
 
 void main() {
-    vec3 lightColor = luminance * color;
+    intensity = 1.5f;
+    lightsource = vec3(-3.0f, 2.0f, 8.0f);
+
+    // Phong
+    light = normalize(lightsource - pixelPosition.xyz); // L
+    reflected = reflect(-light, normalsFrag); // R
+    view = normalize(-pixelPosition.xyz); // V
+
+    luminance = intensity * (max(0, dot(normalsFrag,light)) + pow(dot(reflected, view),1));
+
+    lightColor = luminance * color;
+    textureColor = vec3(texture(smplr, uvCoords));
+
     pColor = (textureColor + lightColor) / 2;
 }

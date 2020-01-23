@@ -2,12 +2,13 @@ package ab3;
 
 public class Gem extends Object3d {
 
-    public Gem(String texture) {
+    public Gem(String texture, int mipMapLevels) {
         this.vertices = drawVertices();
         this.normals = drawNormals();
         this.colors = setColors();
         this.uvCoords = drawUvCoords();
-        setTexture(texture);
+        setTexture(texture, mipMapLevels);
+        setModelMatrix();
     }
 
     private float[] drawVertices() {

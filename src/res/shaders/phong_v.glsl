@@ -1,7 +1,7 @@
 #version 330
 
-layout(location = 0) in vec3 colordata;
-layout(location = 1) in vec3 vertices;
+layout(location = 0) in vec3 vertices;
+layout(location = 1) in vec3 colordata;
 layout(location = 2) in vec3 normals;
 layout(location = 3) in vec2 uvData;
 
