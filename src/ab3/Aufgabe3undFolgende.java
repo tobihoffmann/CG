@@ -11,6 +11,7 @@ public class Aufgabe3undFolgende extends AbstractOpenGLBase {
 	private ShaderProgram gouraudShader;
 	private Matrix4 projectionMatrix;
 	private Object3d gem;
+
 	private Object3d water;
 	private float angle;
 
